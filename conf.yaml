@@ -91,7 +91,7 @@ FunASR:
 GroqWhisperASR:
   api_key: ""
   model: ${GROQ_ASR_MODEL} # use "whisper-large-v3" instead for multi-lingual
-  lang: ${GROQ_ASR_LANG} # or put nothing in it and it will be auto
+  lang: "" # or put nothing in it and it will be auto
 
 # set azure speech recognition configuration in api_keys.py
 
