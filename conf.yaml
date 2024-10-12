@@ -89,7 +89,7 @@ FunASR:
   language: "zh" # zh, en, auto
 
 GroqWhisperASR:
-  api_key: ""
+  api_key: ${GROQ_API_KEY}
   model: ${GROQ_ASR_MODEL} # use "whisper-large-v3" instead for multi-lingual
   lang: "" # or put nothing in it and it will be auto
 
