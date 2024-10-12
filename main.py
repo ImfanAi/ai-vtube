@@ -632,7 +632,7 @@ def load_config_with_env(path) -> dict:
 
 if __name__ == "__main__":
 
-    config = yaml.safe_load(load_config_with_env("config.yaml"))
+    config = yaml.safe_load(load_config_with_env("conf.yaml"))
 
     vtuber_main = OpenLLMVTuberMain(config)
 
