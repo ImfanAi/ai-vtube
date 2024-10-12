@@ -1,8 +1,8 @@
 
 # Server
-PROTOCAL: "http://"
-HOST: "localhost"
-PORT: 12393
+PROTOCAL: ${PROTOCOL}
+HOST: ${HOST}
+PORT: ${PORT}
 
 
 #  ============== LLM Backend Settings ===================
