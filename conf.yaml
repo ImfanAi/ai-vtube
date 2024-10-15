@@ -57,6 +57,10 @@ MIC_IN_BROWSER: False # Deprecated and useless now. Do not enable it. Bad things
 # speech to text model options: "Faster-Whisper", "WhisperCPP", "Whisper", "AzureASR", "FunASR", "GroqWhisperASR"
 ASR_MODEL: "GroqWhisperASR"
 
+AzureASR:
+  api_key: "azure_api_key"
+  region: "eastus"
+
 # Faster whisper config
 Faster-Whisper:
   model_path: "distil-medium.en"
@@ -105,6 +109,13 @@ TTS_MODEL: ${TTS_MODEL}
 # if turned on, the timing and order of the facial expression will be more accurate
 SAY_SENTENCE_SEPARATELY: True
 
+
+AzureTTS:
+  api_key: "azure-api-key"
+  region: "eastus"
+  voice: "en-US-AshleyNeural"
+  pitch: "26" # percentage of the pitch adjustment
+  rate: "1" # rate of speak
 
 barkTTS:  
   voice: "v2/en_speaker_1"

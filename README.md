@@ -1,6 +1,6 @@
 # Open-LLM-VTuber
 
-[![](https://dcbadge.limes.pink/api/server/3UDA8YFDXx)](https://discord.gg/3UDA8YFDXx)  [![](https://img.shields.io/badge/t41372%2FOpen--LLM--VTuber-%25230db7ed.svg?logo=docker&logoColor=blue&labelColor=white&color=blue)](https://hub.docker.com/r/t41372/open-llm-vtuber) [![](https://img.shields.io/badge/todo_list-GitHub_Project-blue)](https://github.com/users/t41372/projects/1/views/1)
+[![](https://dcbadge.limes.pink/api/server/3UDA8YFDXx)](https://discord.gg/3UDA8YFDXx)  [![](https://img.shields.io/badge/t41372%2FOpen--LLM--VTuber-%25230db7ed.svg?logo=docker&logoColor=blue&labelColor=white&color=blue)](https://hub.docker.com/r/t41372/open-llm-vtuber) [![](https://img.shields.io/badge/todo_list-GitHub_Project-blue)](https://github.com/users/t41372/projects/1/views/1)  (QQ群: 792615362）
 
 > :warning: **Read this if you are updating from an old version without the voice interruption feature**:
 > The latest version changed how to open the live2d server and the backend: `server.py` now launches everything it needs (except the browser). To run with Live2D and the browser, launch `server.py` and open the web page in the browser. You no longer need to run `main.py` with the `server.py`. Running `server.py` assumes Live2D mode with the browser, and running `main.py` assumes no Live2D mode without the browser. In addition, options `MIC-IN-BROWSER` and `LIVE2D` in the configuration file no longer have any effects and have been deprecated due to the changes in the backend.
@@ -204,6 +204,7 @@ WhisperCPP coreML configuration:
 
 - Azure Speech Recognition. Install with `pip install azure-cognitiveservices-speech`.
 - API key and internet connection are required.
+- **⚠️ ‼️ The `api_key.py` was deprecated in `v0.2.5`. Please set api keys in `conf.yaml`.**
 
 ## Install Speech Synthesis (text to speech)
 Install the respective package and turn it on using the `TTS_MODEL` option in `conf.yaml`.
@@ -234,23 +235,12 @@ Install the respective package and turn it on using the `TTS_MODEL` option in `c
 - It sounds pretty good. Runs pretty fast.
 - Remember to connect to the internet when using edge tts.
 
-`AzureTTS` (online, API key required)
-- See below
+`AzureTTS` (online, API key required) (This is the exact same TTS used by neuro-sama)
 
-### Azure API for Speech Recognition and Speech to Text, API key needed
-
-Create a file named `api_keys.py` in the project directory, paste the following text into the file, and fill in the API keys and region you gathered from your Azure account.
-
-~~~python
-# Azure API key
-AZURE_API_Key="YOUR-API-KEY-GOES-HERE"
-
-# Azure region
-AZURE_REGION="YOUR-REGION"
-
-# Choose the Text to speech model you want to use
-AZURE_VOICE="en-US-AshleyNeural"
-~~~
+- Install the Azure SDK with the command`pip install azure-cognitiveservices-speech`.
+- Get an API key (for text to speech) from Azure.
+- **⚠️ ‼️ The `api_key.py` was deprecated in `v0.2.5`. Please set api keys in `conf.yaml`.**
+- The default settings in the `conf.yaml` is the voice used by neuro-sama.
 
 
 

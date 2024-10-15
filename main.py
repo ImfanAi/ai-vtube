@@ -37,12 +37,14 @@ class OpenLLMVTuberMain:
     """
 
     config: dict
+    session_id: str
     llm: LLMInterface
     asr: ASRInterface
     tts: TTSInterface
     translator: TranslateInterface | None
     live2d: Live2dModel | None
     _continue_exec_flag: threading.Event
+    heard_sentence: str = ""
     EXEC_FLAG_CHECK_TIMEOUT = 5  # seconds
 
     def __init__(
@@ -58,6 +60,7 @@ class OpenLLMVTuberMain:
         self.live2d = self.init_live2d()
         self._continue_exec_flag = threading.Event()
         self._continue_exec_flag.set()  # Set the flag to continue execution
+        self.session_id = str(uuid.uuid4().hex)
 
         # Init ASR if voice input is on.
         if self.config.get("VOICE_INPUT_ON", False):
@@ -125,33 +128,13 @@ class OpenLLMVTuberMain:
     def init_asr(self) -> ASRInterface:
         asr_model = self.config.get("ASR_MODEL")
         asr_config = self.config.get(asr_model, {})
-        if asr_model == "AzureASR":
-            import api_keys
-
-            asr_config = {
-                "callback": print,
-                "subscription_key": api_keys.AZURE_API_Key,
-                "region": api_keys.AZURE_REGION,
-            }
-
         asr = ASRFactory.get_asr_system(asr_model, **asr_config)
         return asr
 
     def init_tts(self) -> TTSInterface:
         tts_model = self.config.get("TTS_MODEL", "pyttsx3TTS")
         tts_config = self.config.get(tts_model, {})
-
-        if tts_model == "AzureTTS":
-            import api_keys
-
-            tts_config = {
-                "api_key": api_keys.AZURE_API_Key,
-                "region": api_keys.AZURE_REGION,
-                "voice": api_keys.AZURE_VOICE,
-            }
-        tts = TTSFactory.get_tts_engine(tts_model, **tts_config)
-
-        return tts
+        return TTSFactory.get_tts_engine(tts_model, **tts_config)
 
     def set_audio_output_func(
         self, audio_output_func: Callable[[Optional[str], Optional[str]], None]
@@ -466,7 +449,7 @@ class OpenLLMVTuberMain:
                 task_queue.put(None)  # Signal end of production
 
         def consumer_worker():
-            heard_sentence = ""
+            self.heard_sentence = ""
 
             while True:
 
@@ -480,7 +463,7 @@ class OpenLLMVTuberMain:
                     if audio_info is None:
                         break  # End of production
                     if audio_info:
-                        heard_sentence += audio_info["sentence"]
+                        self.heard_sentence += audio_info["sentence"]
                         self._play_audio_file(
                             sentence=audio_info["sentence"],
                             filepath=audio_info["audio_filepath"],
@@ -632,7 +615,7 @@ def load_config_with_env(path) -> dict:
 
 if __name__ == "__main__":
 
-    config = yaml.safe_load(load_config_with_env("conf.yaml"))
+    config = load_config_with_env("conf.yaml")
 
     vtuber_main = OpenLLMVTuberMain(config)
 
@@ -644,14 +627,18 @@ if __name__ == "__main__":
         except InterruptedError as e:
             print(f"😢Conversation was interrupted. {e}")
 
-    while True:
-        print("tts on: ", vtuber_main.config.get("TTS_ON", False))
-        if vtuber_main.config.get("TTS_ON", False) == False:
-            print("its indeed off")
-            vtuber_main.conversation_chain()
-        else:
-            threading.Thread(target=_run_conversation_chain).start()
+    def _interrupt_on_i():
+        while input(">>> say i and press enter to interrupt: ") == "i":
+            print("\n\n!!!!!!!!!! interrupt !!!!!!!!!!!!...\n")
+            print("Heard sentence: ", vtuber_main.heard_sentence)
+            vtuber_main.interrupt(vtuber_main.heard_sentence)
 
-            if input(">>> say i and press enter to interrupt: ") == "i":
-                print("\n\n!!!!!!!!!! interrupt !!!!!!!!!!!!...\n")
-                vtuber_main.interrupt()
+    threading.Thread(target=_interrupt_on_i).start()
+
+    print("tts on: ", vtuber_main.config.get("TTS_ON", False))
+    while True:
+        try:
+            vtuber_main.conversation_chain()
+        except InterruptedError as e:
+            print(f"😢Conversation was interrupted. {e}")
+            continue
